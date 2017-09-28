@@ -11,5 +11,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/Users/jacobbrooks/Desktop/stuff1/workspace/CSC375Assignment1/lib/jars/slick.jar"/>
 	<classpathentry kind="lib" path="/Users/jacobbrooks/Desktop/stuff1/workspace/CSC375Assignment1/lib/jars/lwjgl.jar"/>
+	<classpathentry kind="lib" path="/Users/jacobbrooks/Desktop/core.jar" sourcepath="/Users/jacobbrooks/Desktop/core.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

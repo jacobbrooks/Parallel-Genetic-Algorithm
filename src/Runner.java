@@ -14,8 +14,8 @@ public class Runner extends Thread{
 	}
 	
 	public void run(){
-		localRoom.crossOver();
 		localRoom.mutate(mutationRate);
+		localRoom.crossOver();
 		localRoom.updateTotalAffinity();
 		controller.readAndSet(localRoom.totalAffinity, id);
 	}

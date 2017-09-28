@@ -1,15 +1,22 @@
-public class Control {
+import processing.core.PApplet;
+import processing.core.PImage;
+
+public class Control extends PApplet{
 	private final int THREAD_COUNT = 32;
-	private final int ROWS = 8;
-	private final int COLS = 4;
-	private final int MUTATION_RATE = 35; //a percentage %
-	private final int GENERATIONS = 5000;
+	public final int ROWS = 8;
+	public final int COLS = 4;
+	private final int MUTATION_RATE = 30; //a percentage %
+	private final int GENERATIONS = 10000;
 	private Room[] solutions;
 	private Thread[] runners;
-	private Room masterRoom;
+	public Room masterRoom;
 	private double bestTotalAffinity;
 	private int bestIndex;
 	private boolean indexChanged;
+	private PImage[][] images;
+	private PImage electron;
+	private PImage positron;
+	private int loopCount;
 	
 	public Control(){
 		bestTotalAffinity = 2.0; //2 is the highest net charge (lowest total affinity) possible
@@ -19,20 +26,7 @@ public class Control {
 		masterRoom = new Room(ROWS, COLS);
 		updateSolutions();
 		indexChanged = false;
-	}
-	
-	public void go(){
-		int generations = 0;
-		while(generations < Math.floorDiv(GENERATIONS, THREAD_COUNT)){
-			initThreads();
-			startThreads();
-			joinThreads();
-			updateMaster();
-			updateSolutions();
-			generations++;
-		}
-		masterRoom.printParticles();
-		System.out.println("\nAffinity: " + bestTotalAffinity);
+		loopCount = 0;
 	}
 	
 	private void initThreads(){
@@ -75,6 +69,61 @@ public class Control {
 			bestTotalAffinity = newAffinity;
 			bestIndex = newIndex;
 			indexChanged = true;
+		}
+	}
+	
+	private void loadImages(){
+		images = new PImage[ROWS][COLS];
+		for(int i = 0; i < ROWS; i++){
+			for(int j = 0; j < COLS; j++){
+				if(masterRoom.arrangement[i][j].charge < 0){
+					images[i][j] = electron;
+				}else{
+					images[i][j] = positron;
+				}
+				images[i][j].resize(150,100);
+			}
+		}
+	}
+	
+	private void displayImages(){
+		for(int i = 0; i < ROWS; i++){
+			for(int j = 0; j < COLS; j++){
+				image(images[i][j], j * 150, i * 100);
+			}
+		}
+	}
+	
+	public void settings(){
+		size(600,800);
+	}
+	
+	public void setup(){
+		electron = loadImage("res/e.png");
+		positron = loadImage("res/p.png");
+		PImage bg = loadImage("res/bg.jpg");
+		bg.resize(600, 800);
+		background(bg);
+		loadImages();
+	}
+	
+	
+	public void draw(){
+		displayImages();
+		if(loopCount < GENERATIONS / THREAD_COUNT){
+			initThreads();
+			startThreads();
+			joinThreads();
+			updateMaster();
+			updateSolutions();
+			loadImages();
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			loopCount++;
+			System.out.println(loopCount);
 		}
 	}
 
